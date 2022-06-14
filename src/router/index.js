@@ -4,7 +4,11 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 // 路由映射数组
-const routes = []
+const routes = [{
+  path: '/login',
+  name: 'login',
+  component: () => import('@/views/login')
+}]
 // 实例化路由对象
 const router = new VueRouter({
   routes
