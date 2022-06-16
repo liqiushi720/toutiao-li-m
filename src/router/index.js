@@ -8,6 +8,9 @@ const routes = [{
   path: '/login',
   name: 'login',
   component: () => import('@/views/login')
+}, {
+  path: '/',
+  component: () => import('@/views/layout')
 }]
 // 实例化路由对象
 const router = new VueRouter({
