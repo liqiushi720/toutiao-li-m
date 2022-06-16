@@ -1,6 +1,8 @@
 <template>
   <!-- 只能有一个div根标签 -->
   <div class="layout-container">
+    <!-- 子路由需要一个出口来进行存储 -->
+    <router-view />liqiushi
     <van-tabbar class="layout-tabbar" route>
       <van-tabbar-item to="/">
         <i slot="icon" class="toutiao toutiao-shouye"></i>
@@ -14,7 +16,7 @@
         <i slot="icon" class="toutiao toutiao-shipin"></i>
         <span class="text">视频</span>
       </van-tabbar-item>
-      <van-tabbar-item to="/wode">
+      <van-tabbar-item to="/my">
         <i slot="icon" class="toutiao toutiao-wode"></i>
         <span class="text">我的</span>
       </van-tabbar-item>
