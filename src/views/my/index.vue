@@ -1,16 +1,8 @@
 <template>
   <!-- 只能有一个div根标签 -->
   <div class="layout-container">
-    <!-- not-login未登录状态 -->
-    <div class="header not-login">
-      <div class="login-btn">
-        <img class="moblie-img" src="@/assets/mobile.png" alt />
-        <span class="text">登录&nbsp;/&nbsp;注册</span>
-      </div>
-    </div>
-    <!-- /结尾-未登录 -->
     <!-- 登录状态 -->
-    <div class="degnlu header">
+    <div class="degnlu header" v-if="token">
       <div class="top">
         <div class="left">
           <van-image class="avatar" round src="https://img01.yzcdn.cn/vant/cat.jpeg" />
@@ -40,6 +32,14 @@
       </div>
     </div>
     <!-- /结束-登录 -->
+    <!-- not-login未登录状态 -->
+    <div class="header not-login" v-else>
+      <div class="login-btn">
+        <img class="moblie-img" src="@/assets/mobile.png" alt />
+        <span @click="$router.push('/login')" class="text">登录&nbsp;/&nbsp;注册</span>
+      </div>
+    </div>
+    <!-- /结尾-未登录 -->
 
     <!-- 宫格 -->
     <van-grid :column-num="2" class="grid" clickable>
@@ -56,23 +56,43 @@
     <!-- 单元格 -->
     <van-cell title="消息通知" is-link />
     <van-cell class="mb-9" title="Al智能" is-link />
-    <van-cell class="logout-cell" clickable title="退出登录" />
+    <van-cell v-if="token" class="logout-cell" clickable title="退出登录" @click="login_out" />
   </div>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'myIndex',
   data () {
     return {}
   },
   created () { },
-  mounted () { },
+  mounted () {
+
+  },
   components: {},
   props: {},
-  computed: {},
+  computed: {
+    ...mapState(['token'])
+  },
   watch: {},
-  methods: {}
+  methods: {
+    ...mapMutations(['removeItems']),
+    login_out () {
+      this.$dialog.confirm({
+        title: '确定要退出?'
+
+      })
+        .then(() => {
+          // on confirm
+          this.removeItems(this.token)
+        })
+        .catch(() => {
+          // on cancel
+        })
+    }
+  }
 }
 </script>
 

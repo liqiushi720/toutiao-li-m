@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { setItems, getItems } from '@/utils/storage'
+import { setItems, getItems, removeItem } from '@/utils/storage'
 Vue.use(Vuex)
 const TOKEN_TOUTIAO = 'TOKEN_LOGIN'
 export default new Vuex.Store({
@@ -15,6 +15,10 @@ export default new Vuex.Store({
       state.token = playload
       // localStorage.setItem(TOKEN_TOUTIAO, JSON.stringify(state.token))
       setItems(TOKEN_TOUTIAO, state.token)
+    },
+    removeItems (state) {
+      state.token = null
+      removeItem(TOKEN_TOUTIAO)
     }
   },
   actions: {
