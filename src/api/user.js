@@ -17,3 +17,7 @@ export const getUserInfo = () => request({
   url: '/v1_0/user'
   // headers: { Authorization: `Bearer ${store.state.token.token}` }
 })
+// 获取用户的频道
+export const getUserPinDao = () => request({
+  url: '/v1_0/user/channels'
+})
