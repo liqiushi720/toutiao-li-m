@@ -68,7 +68,7 @@
         <!-- 文章内容 -->
         <div class="article-content markdown-body" ref="article-content" v-html="article.content"></div>
         <van-divider>正文结束</van-divider>
-        <comment-list :source="article.art_id"/>
+        <comment-list :list="list" :source="article.art_id" :totalCount.sync="totalCount"/>
         <!-- 底部区域 -->
         <div class="article-bottom">
           <van-button
@@ -76,11 +76,12 @@
             type="default"
             round
             size="small"
+            @click="isReplyShow=true"
           >写评论
           </van-button>
           <van-icon
             name="comment-o"
-            info="123"
+            :info="totalCount"
             color="#777"
           />
           <!--                    <van-icon-->
@@ -95,6 +96,26 @@
           <like-article class="btn-item" v-model="article.attitude" :article-id="article.art_id"/>
           <van-icon name="share" color="#777777"></van-icon>
         </div>
+        <!------------------------ 评论回复 ------------------------------>
+        <van-popup
+          v-model="isReplyShow"
+          position="bottom"
+        >
+          <comment-post :target="article.art_id"/>
+        </van-popup>
+        <!------------------------ /评论回复 ------------------------------>
+        <!------------------------ 评论回复 ------------------------------>
+        <van-popup
+          v-model="isReplyShow"
+          position="bottom"
+          style="height:80%"
+        >
+          <comment-reply
+            :comment="comment"
+            :isReplyShow.sync="isReplyShow"
+          />
+        </van-popup>
+        <!------------------------ /评论回复 ------------------------------>
         <!-- /底部区域 -->
       </div>
       <!-- /加载完成-文章详情 -->
@@ -126,6 +147,8 @@ import FollowUser from '@/components/follow-user'
 import CollectArticle from '@/components/collect-article'
 import LikeArticle from '@/components/like-article'
 import CommentList from '@/views/article/components/comment-list'
+import CommentPost from '@/views/article/components/comment-post'
+import CommentReply from '@/views/article/components/comment-reply'
 
 export default {
   filters: {
@@ -135,6 +158,8 @@ export default {
   },
   name: 'ArticleIndex',
   components: {
+    CommentReply,
+    CommentPost,
     CommentList,
     LikeArticle,
     CollectArticle,
@@ -149,9 +174,14 @@ export default {
   },
   data () {
     return {
+      list: [],
       article: {},
       show: 0,
-      followLoading: false // 点击关注是否处于false
+      followLoading: false, // 点击关注是否处于false
+      totalCount: 0,
+      isReplyShow: false,
+      isPostShow: false,
+      comment: null
     }
   },
   computed: {},

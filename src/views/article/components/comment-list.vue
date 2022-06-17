@@ -5,25 +5,40 @@
     finished-text="没有更多了"
     @load="onLoad"
   >
-    <van-cell v-for="(item,index) in list" :key="index" :title="item.content"></van-cell>
+    <!--    <van-cell v-for="(item,index) in list" :key="index" :title="item.content"></van-cell>-->
+    <comment-item
+      v-for="(item, index) in list"
+      :key="index"
+      :comment="item"
+      :index="index"/>
   </van-list>
 </template>
 <script>
 
 import { getComments } from '@/api/comment'
+import CommentItem from './comment-item'
 
 export default {
+  created () {
+    this.onLoad()
+  },
   name: 'CommentList',
-  components: {},
+  components: {
+    CommentItem
+  },
   props: {
     source: {
       type: [Number, String, Object],
+      required: true
+    },
+    list: {
+      type: Array,
       required: true
     }
   },
   data () {
     return {
-      list: [], // 评论列表
+      // list: [], // 评论列表
       loading: false, // 上拉加载更多的 loading
       finished: false, // 是否加载结束
       offset: null, // 获取下一页数据的标记
@@ -44,8 +59,12 @@ export default {
         })
 
         // 2. 将数据添加到列表中(一定要注意是追加数据，否则列表高度不增加，形成死循环)
-        const { results } = data.data
-        this.list.push(...results)
+        const {
+          results,
+          total_count: totalCount
+        } = data.data
+        this.$emit('update:totalCount', totalCount)
+        this.$parent.list.push(...results)
 
         // 3. 将 loading 设置为 false
         this.loading = false
