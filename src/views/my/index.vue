@@ -5,8 +5,8 @@
     <div class="degnlu header" v-if="token">
       <div class="top">
         <div class="left">
-          <van-image class="avatar" round src="https://img01.yzcdn.cn/vant/cat.jpeg" />
-          <span class="name">Web_front_end</span>
+          <van-image class="avatar" round :src="userInfo.photo" />
+          <span class="name">{{ userInfo.name }}</span>
         </div>
         <div class="right">
           <van-button type="default" round size="mini">编辑资料</van-button>
@@ -14,20 +14,20 @@
       </div>
       <div class="bottom">
         <div class="bottom-item">
-          <span class="count">999</span>
+          <span class="count">{{ userInfo.art_count }}</span>
           <span class="text">头条</span>
         </div>
         <div class="bottom-item">
-          <span class="count">999</span>
-          <span class="text">头条</span>
+          <span class="count">{{ userInfo.follow_count }}</span>
+          <span class="text">关注</span>
         </div>
         <div class="bottom-item">
-          <span class="count">999</span>
-          <span class="text">头条</span>
+          <span class="count">{{ userInfo.fans_count }}</span>
+          <span class="text">粉丝</span>
         </div>
         <div class="bottom-item">
-          <span class="count">999</span>
-          <span class="text">头条</span>
+          <span class="count">{{ userInfo.like_count }}</span>
+          <span class="text">获赞</span>
         </div>
       </div>
     </div>
@@ -62,12 +62,19 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
+import { getUserInfo } from '@/api/user'
 export default {
   name: 'myIndex',
   data () {
-    return {}
+    return {
+      userInfo: {}
+    }
   },
-  created () { },
+  created () {
+    if (this.token) {
+      this.loadingUserInfo()
+    }
+  },
   mounted () {
 
   },
@@ -91,6 +98,15 @@ export default {
         .catch(() => {
           // on cancel
         })
+    },
+    async loadingUserInfo () {
+      try {
+        const { data: liqiushi } = await getUserInfo(this.token)
+        // console.log(res)
+        this.userInfo = liqiushi.data
+      } catch (error) {
+        this.$toast.fail('获取用户信息失败')
+      }
     }
   }
 }
