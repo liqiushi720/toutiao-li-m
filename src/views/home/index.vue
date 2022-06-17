@@ -13,7 +13,9 @@ border 底边框线
 swipeable 开启左右手势滑动
     -->
     <van-tabs class="channel-tabs" v-model="active" swipeable animated border>
-      <van-tab v-for="item in channels" :key="item.id" :title="item.name">{{item.name}}的内容</van-tab>
+      <van-tab v-for="item in channels" :key="item.id" :title="item.name">
+        <ArticleIndex :channels="item" />
+      </van-tab>
 
       <!-- 右侧自定义内容 -->
       <!-- 占位元素 -->
@@ -28,6 +30,7 @@ swipeable 开启左右手势滑动
 </template>
 
 <script>
+import ArticleIndex from './components/article-list.vue'
 import { getUserPinDao } from '@/api/user'
 export default {
   name: 'homeIndex',
@@ -42,7 +45,9 @@ export default {
     this.loadingChannels()
   },
   mounted () { },
-  components: {},
+  components: {
+    ArticleIndex
+  },
   props: {},
   computed: {},
   watch: {},
