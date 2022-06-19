@@ -2,19 +2,22 @@
   <!-- 只能有一个div根标签 -->
   <div class="article-list">
     <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-      <van-cell v-for="item in list" :key="item" :title="item" />
+      <van-cell v-for="(item,index) in list" :key="index" :title="item.title" />
     </van-list>
   </div>
 </template>
 
 <script>
+import { getArticles } from '@/api/articles'
+
 export default {
   name: 'articleIndex',
   data () {
     return {
       list: [],
       loading: false,
-      finished: false
+      finished: false,
+      timestamp: Date.now()
     }
   },
   created () { },
@@ -29,22 +32,23 @@ export default {
   computed: {},
   watch: {},
   methods: {
-    onLoad () {
-      // 异步更新数据
-      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1)
-        }
-
-        // 加载状态结束
+    async onLoad () {
+      try {
+        const { data } = await getArticles({
+          channel_id: this.channels.id,
+          timestamp: this.timestamp,
+          with_top: 1
+        })
+        console.log(data)
+        this.timestamp = data.data.pre_timestamp
         this.loading = false
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true
-        }
-      }, 1000)
+        // this.list = [...this.list, ...data.data.results]
+        this.list.push(...data.data.results)
+        if (this.timestamp === null) { this.finished = true }
+        console.log(data)
+      } catch (error) {
+        this.$toast.fail('获取频道失败')
+      }
     }
   }
 }

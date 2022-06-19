@@ -115,7 +115,7 @@ export default {
 <style scoped lang="less">
 .layout-container {
   .header {
-    height: 410px;
+    height: 361px;
     background-image: url("~@/assets/banner.png");
     box-sizing: cover;
   }
