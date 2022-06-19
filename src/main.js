@@ -9,8 +9,9 @@ import Vant from 'vant'
 import 'vant/lib/index.css'
 // 在main.js中加载执行flexible模块
 import 'amfe-flexible'
+import dayjs from './utils/dayjs'
 Vue.use(Vant)
-
+Vue.filter('relativeTime', values => dayjs().to(dayjs(values)))
 Vue.config.productionTip = false
 
 new Vue({
