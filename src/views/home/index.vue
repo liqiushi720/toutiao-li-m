@@ -14,39 +14,56 @@ swipeable 开启左右手势滑动
     -->
     <van-tabs class="channel-tabs" v-model="active" swipeable animated border>
       <van-tab v-for="item in channels" :key="item.id" :title="item.name">
-        <ArticleIndex :channels="item" />
+        <ArticleIndex :channels="item"/>
       </van-tab>
 
       <!-- 右侧自定义内容 -->
       <!-- 占位元素 -->
       <div slot="nav-right" class="placeholder"></div>
       <!-- 右侧按钮 -->
-      <div slot="nav-right" class="hamburger-btn">
+      <div slot="nav-right" class="hamburger-btn" @click="isChannelEditShow=true">
         <i class="toutiao toutiao-gengduo"></i>
       </div>
     </van-tabs>
     <!-- /频道列表 -->
+    <!-- 频道编辑 -->
+    <van-popup
+      class="edit-channel-popup"
+      v-model="isChannelEditShow"
+      position="bottom"
+      closeable
+      close-icon-position="top-left"
+      :style="{ height: '100%' }"
+    >
+      <channel-edit :my-channels="channels" :active="active"/>  <!-- 使用组件 -->
+    </van-popup>
+    <!-- /频道编辑 -->
   </div>
 </template>
 
 <script>
 import ArticleIndex from './components/article-list.vue'
 import { getUserPinDao } from '@/api/user'
+import ChannelEdit from './components/channel-edit'
+
 export default {
   name: 'homeIndex',
   data () {
     return {
       active: 0,
-      channels: []
+      channels: [],
+      isChannelEditShow: true
 
     }
   },
   created () {
     this.loadingChannels()
   },
-  mounted () { },
+  mounted () {
+  },
   components: {
-    ArticleIndex
+    ArticleIndex,
+    ChannelEdit
   },
   props: {},
   computed: {},
@@ -66,22 +83,30 @@ export default {
 </script>
 
 <style scoped lang="less">
+.edit-channel-popup {
+  box-sizing: border-box;
+}
+
 .home-container {
   padding-top: 174px;
   padding-bottom: 100px;
+
   /deep/ .van-nav-bar__title {
     max-width: unset;
   }
+
   .search-btn {
     width: 555px;
     height: 64px;
     background-color: #5babfb;
     border: none;
     font-size: 28px;
+
     .van-icon {
       font-size: 32px;
     }
   }
+
   /deep/ .channel-tabs {
     .van-tabs__wrap {
       position: fixed;
@@ -130,9 +155,11 @@ export default {
       height: 82px;
       background-color: #fff;
       background-color: rgba(255, 255, 255, 0.902);
+
       i.toutiao {
         font-size: 33px;
       }
+
       &:before {
         content: "";
         position: absolute;
