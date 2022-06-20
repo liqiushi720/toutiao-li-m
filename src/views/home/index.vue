@@ -35,7 +35,7 @@ swipeable 开启左右手势滑动
       close-icon-position="top-left"
       :style="{ height: '100%' }"
     >
-      <channel-edit :my-channels="channels" :active="active"/>  <!-- 使用组件 -->
+      <channel-edit :my-channels="channels" :active.sync="active" @addChannel="addChannel"/>  <!-- 使用组件 -->
     </van-popup>
     <!-- /频道编辑 -->
   </div>
@@ -69,6 +69,9 @@ export default {
   computed: {},
   watch: {},
   methods: {
+    addChannel (channel) {
+      this.channels.push(channel)
+    },
     async loadingChannels () {
       try {
         const { data } = await getUserPinDao()

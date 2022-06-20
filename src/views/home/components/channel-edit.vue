@@ -8,18 +8,21 @@
         plain
         round
         size="mini"
-      >完成/编辑
+        @click="isEdit =!isEdit"
+      >{{ isEdit ? '完成' : '编辑' }}
       </van-button>
     </van-cell>
     <van-grid class="my-grid" :gutter="10">
       <van-grid-item
         class="grid-item"
-        v-for="(channel,index) in myChannels" :key="index"
+        v-for="(channel,index) in myChannels" :key="index" @click="onMyChannelClick(index,channel.id)"
 
       >
         <van-icon
           slot="icon"
           name="clear"
+          v-show="isEdit&&fixedChannels.indexOf(channel.id)===-1"
+
         ></van-icon>
         <span
           class="text"
@@ -36,8 +39,11 @@
     <van-grid class="recommend-grid" :gutter="10">
       <van-grid-item
         class="grid-item"
+        v-for="(channel,index) in recommentChannels"
+        :key="index"
         icon="plus"
-        text="名称"
+        :text="channel.name"
+        @click="onAddChannel(channel)"
       />
     </van-grid>
     <!-- /频道推荐 -->
@@ -47,6 +53,7 @@
 <script>
 
 import { getAllChannels } from '@/api/channel'
+import _ from 'lodash'
 
 export default {
 
@@ -64,10 +71,16 @@ export default {
   },
   data () {
     return {
-      allChannels: {}
+      allChannels: {},
+      isEdit: false,
+      fixedChannels: [0]
     }
   },
-  computed: {},
+  computed: {
+    recommentChannels () {
+      return _.differenceBy(this.allChannels, this.myChannels, 'id')
+    }
+  },
   watch: {},
   created () {
     this.loadAllChannels()
@@ -75,6 +88,24 @@ export default {
   mounted () {
   },
   methods: {
+    onMyChannelClick (index, id) {
+      if (this.isEdit) {
+        //  1. 第一个功能 : 不让用户删除特定的频道
+        if (this.fixedChannels.indexOf(id) !== -1) return
+        // 2. 第二个删除
+        this.$parent.$parent.channels.splice(index, 1)
+        if (index <= this.active) {
+          this.$emit('update:active', this.active - 1)
+        }
+      } else {
+        this.$emit('update:active', index)
+        this.$parent.$parent.isChannelEditShow = false
+      }
+    },
+    onAddChannel (channel) {
+      /* this.myChannels.push(channel) */
+      this.$emit('addChannel', channel)
+    },
     async loadAllChannels () {
       try {
         const { data } = await getAllChannels()
