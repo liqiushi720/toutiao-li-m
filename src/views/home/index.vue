@@ -45,6 +45,8 @@ swipeable 开启左右手势滑动
 import ArticleIndex from './components/article-list.vue'
 import { getUserPinDao } from '@/api/user'
 import ChannelEdit from './components/channel-edit'
+import { mapState } from 'vuex'
+import { getItems } from '@/utils/storage'
 
 export default {
   name: 'homeIndex',
@@ -52,7 +54,7 @@ export default {
     return {
       active: 0,
       channels: [],
-      isChannelEditShow: true
+      isChannelEditShow: false
 
     }
   },
@@ -66,7 +68,9 @@ export default {
     ChannelEdit
   },
   props: {},
-  computed: {},
+  computed: {
+    ...mapState(['token'])
+  },
   watch: {},
   methods: {
     addChannel (channel) {
@@ -75,11 +79,39 @@ export default {
     async loadingChannels () {
       try {
         const { data } = await getUserPinDao()
-        // console.log(data)
         this.channels = data.data.channels
-      } catch (error) {
+        if (!this.token && getItems('TOUTIAO_CHANNELS')) {
+          this.channels = getItems('TOUTIAO_CHANNELS')
+        }
+      } catch (e) {
         this.$toast.fail('获取频道失败')
       }
+
+      // try {
+      //   // const { data } = await getUserPinDao()
+      //   // // console.log(data)
+      //   // this.channels = data.data.channels
+      //   let channels = []
+      //   // 已登录请求用户的频道
+      //   if (this.token) {
+      //     const { data } = await getUserPinDao()
+      //     channels = data.data.channels
+      //   } else {
+      //     const localChannels = getItems('TOUTIAO_CHANNELS')
+      //     if (localChannels) {
+      //       channels = localChannels
+      //     } else {
+      //       const { data } = await getUserPinDao()
+      //       channels = data.data.channels
+      //     }
+      //   }
+      //
+      //   // 未登录 同时判断本地是否有频道列表
+      //
+      //   this.channels = channels
+      // } catch (error) {
+      //   this.$toast.fail('获取频道失败')
+      // }
     }
   }
 }

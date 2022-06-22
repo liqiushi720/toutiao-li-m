@@ -52,8 +52,11 @@
 
 <script>
 
-import { getAllChannels } from '@/api/channel'
+import { addUserChannel, deleteUserChannel, getAllChannels } from '@/api/channel'
 import _ from 'lodash'
+
+import { mapState } from 'vuex'
+import { setItems } from '@/utils/storage'
 
 export default {
 
@@ -77,6 +80,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['token']),
     recommentChannels () {
       return _.differenceBy(this.allChannels, this.myChannels, 'id')
     }
@@ -88,7 +92,7 @@ export default {
   mounted () {
   },
   methods: {
-    onMyChannelClick (index, id) {
+    async onMyChannelClick (index, id) {
       if (this.isEdit) {
         //  1. 第一个功能 : 不让用户删除特定的频道
         if (this.fixedChannels.indexOf(id) !== -1) return
@@ -97,14 +101,40 @@ export default {
         if (index <= this.active) {
           this.$emit('update:active', this.active - 1)
         }
+        if (this.token) {
+          // 发请求
+          try {
+            await deleteUserChannel(id)
+          } catch (e) {
+            this.$toast('删除失败，请稍后重试')
+          }
+        } else {
+          // 存本地
+          setItems('TOUTIAO_CHANNELS', this.myChannels)
+        }
       } else {
         this.$emit('update:active', index)
         this.$parent.$parent.isChannelEditShow = false
       }
     },
-    onAddChannel (channel) {
+    async onAddChannel (channel) {
       /* this.myChannels.push(channel) */
       this.$emit('addChannel', channel)
+      //  ① 判断用户是否登录,通过token的来判断
+      if (this.token) {
+        // 发请求
+        try {
+          await addUserChannel({
+            id: channel.id,
+            seq: this.myChannels.length
+          })
+        } catch (e) {
+          this.$toast('保存失败，请稍后重试')
+        }
+      } else {
+        // 存本地
+        setItems('TOUTIAO_CHANNELS', this.myChannels)
+      }
     },
     async loadAllChannels () {
       try {
