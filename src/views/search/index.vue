@@ -56,13 +56,15 @@ export default {
   },
   computed: {},
   watch: {
-    searchText (val, oldVal) {
+    searchText (val) {
       if (val) {
         this.show = 1
       } else {
         this.show = 0
       }
-      this.loadSearchSuggestions(val)
+      if (val) {
+        this.loadSearchSuggestions(val)
+      }
     }
   },
   created () {
