@@ -13,16 +13,17 @@
         @search="onSearch"
         @cancel="onCancel"
         @focus="onFocus"
+
       />
     </form>
     <!-- /搜索栏 -->
 
     <!-- 搜索结果 -->
-    <search-result v-if="show==2"/>
+    <search-result v-if="show==2" :searchText="searchText"/>
     <!-- /搜索结果 -->
 
     <!-- 联想建议 -->
-    <search-suggestion v-if="show==1" :suggestions="suggestions"/>
+    <search-suggestion v-if="show==1" :suggestions="suggestions" @search="onSearch"/>
     <!-- /联想建议 -->
 
     <!-- 搜索历史记录 -->
@@ -35,7 +36,7 @@
 import SearchResult from './components/search-result'
 import SearchHistory from './components/search-history'
 import SearchSuggestion from './components/search-suggestion'
-import { getSearchSuggestions } from '@/utils/search'
+import { getSearchSuggestions } from '@/api/search'
 
 export default {
   name: 'SearchPage',
@@ -56,7 +57,9 @@ export default {
   },
   computed: {},
   watch: {
+
     searchText (val) {
+      if (this.show === 2) return
       if (val) {
         this.show = 1
       } else {
@@ -71,6 +74,7 @@ export default {
   },
   methods: {
     onSearch (val) {
+      this.searchText = val
       if (this.searchText) {
         this.show = 2
       }
@@ -82,6 +86,7 @@ export default {
       if (this.searchText) {
         this.show = 1
       }
+      this.loadSearchSuggestions(this.searchText)
     },
     loadSearchSuggestions (q) {
       // 清除定时器

@@ -6,3 +6,7 @@ export const getSearchSuggestions = q => request({
     q
   }
 })
+export const getSearchResult = params => request({
+  url: '/v1_0/search',
+  params
+})

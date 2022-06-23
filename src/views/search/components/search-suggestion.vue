@@ -1,6 +1,7 @@
 <template>
   <div class="search-suggestion">
-    <van-cell v-for="(text,index)  in suggestions" :key="index" :title="text" icon="search">
+    <van-cell v-for="(text,index)  in suggestions" :key="index" icon="search" @click="$emit('search',text)">
+      <div slot="title" v-html="highlight(text)"></div>
     </van-cell>
   </div>
 </template>
@@ -24,7 +25,13 @@ export default {
   },
   mounted () {
   },
-  methods: {}
+  methods: {
+    highlight (text) {
+      const hightStr = `<span style="color: red">${this.$parent.searchText}</span>`
+      const reg = new RegExp(this.$parent.searchText, 'gi')
+      return text.replace(reg, hightStr)
+    }
+  }
 }
 </script>
 
