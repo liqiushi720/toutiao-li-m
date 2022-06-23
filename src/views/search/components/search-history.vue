@@ -1,21 +1,16 @@
 <template>
   <div className="search-history">
     <van-cell title="搜索历史">
-      <span>全部删除</span>
-      <span>完成</span>
-      <van-icon name="delete"/>
+      <div v-if="isDeleteShow">
+        <span @click="$parent.searchHistories=[]">全部删除</span>
+        &nbsp; &nbsp;
+        <span @click="isDeleteShow=false">完成</span>
+      </div>
+      <van-icon v-else name="delete" @click="isDeleteShow=true"/>
     </van-cell>
-    <van-cell title="hello">
-      <van-icon name="close"/>
-    </van-cell>
-    <van-cell title="hello">
-      <van-icon name="close"/>
-    </van-cell>
-    <van-cell title="hello">
-      <van-icon name="close"/>
-    </van-cell>
-    <van-cell title="hello">
-      <van-icon name="close"/>
+    <van-cell @click="onSearchItemClick(item,index)" :title="item" v-for="(item, index) in searchHistories"
+              :key="index">
+      <van-icon v-show="isDeleteShow" name="close"/>
     </van-cell>
   </div>
 </template>
@@ -24,9 +19,16 @@
 export default {
   name: 'SearchHistory',
   components: {},
-  props: {},
+  props: {
+    searchHistories: {
+      type: Array,
+      required: true
+    }
+  },
   data () {
-    return {}
+    return {
+      isDeleteShow: false
+    }
   },
   computed: {},
   watch: {},
@@ -34,7 +36,16 @@ export default {
   },
   mounted () {
   },
-  methods: {}
+  methods: {
+    onSearchItemClick (item, index) {
+      if (this.isDeleteShow) {
+        // 删除状态
+        this.$parent.searchHistories.splice(index, 1)
+      } else {
+        this.$parent.onSearch(item)
+      }
+    }
+  }
 }
 </script>
 

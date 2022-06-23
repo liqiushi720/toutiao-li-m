@@ -6,7 +6,7 @@
      -->
     <form class="search-form" action="/">
       <van-search
-        v-model="searchText"
+        v-model.trim="searchText"
         show-action
         placeholder="请输入搜索关键词"
         background="#3296fa"
@@ -19,15 +19,15 @@
     <!-- /搜索栏 -->
 
     <!-- 搜索结果 -->
-    <search-result v-if="show==2" :searchText="searchText"/>
+    <search-result v-if="show===2" :searchText="searchText"/>
     <!-- /搜索结果 -->
 
     <!-- 联想建议 -->
-    <search-suggestion v-if="show==1" :suggestions="suggestions" @search="onSearch"/>
+    <search-suggestion v-if="show===1" :suggestions="suggestions" @search="onSearch"/>
     <!-- /联想建议 -->
 
     <!-- 搜索历史记录 -->
-    <search-history v-if="show===0 "/>
+    <search-history v-if="show===0 " :searchHistories="searchHistories"/>
     <!-- /搜索历史记录 -->
 
   </div>
@@ -37,6 +37,7 @@ import SearchResult from './components/search-result'
 import SearchHistory from './components/search-history'
 import SearchSuggestion from './components/search-suggestion'
 import { getSearchSuggestions } from '@/api/search'
+import { getItems, setItems } from '@/utils/storage'
 
 export default {
   name: 'SearchPage',
@@ -49,10 +50,11 @@ export default {
   data () {
     return {
       searchText: '', // 绑定输入框变量
-      show: '0',
+      show: 0,
       suggestions: [], // 联想建议数据列表
-      timer: null
-
+      timer: null,
+      // searchHistories: []
+      searchHistories: getItems('serach-histories') || []
     }
   },
   computed: {},
@@ -68,15 +70,25 @@ export default {
       if (val) {
         this.loadSearchSuggestions(val)
       }
+    },
+    searchHistories (val) {
+      setItems('serach-histories', val)
     }
   },
   created () {
   },
   methods: {
     onSearch (val) {
-      this.searchText = val
       if (this.searchText) {
-        this.show = 2
+        // 数组去重
+        this.searchHistories.unshift(val)
+        const set = new Set(this.searchHistories)
+        this.searchHistories = [...set]
+
+        this.searchText = val
+        if (this.searchText) {
+          this.show = 2
+        }
       }
     },
     onCancel () {
@@ -86,7 +98,9 @@ export default {
       if (this.searchText) {
         this.show = 1
       }
-      this.loadSearchSuggestions(this.searchText)
+      if (this.searchText) {
+        this.loadSearchSuggestions(this.searchText)
+      }
     },
     loadSearchSuggestions (q) {
       // 清除定时器
