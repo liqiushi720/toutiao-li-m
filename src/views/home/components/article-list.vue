@@ -56,7 +56,7 @@ export default {
           timestamp: this.timestamp,
           with_top: 1
         })
-        console.log(data)
+        // console.log(data)
         this.timestamp = data.data.pre_timestamp
         this.loading = false
         // this.list = [...this.list, ...data.data.results]
@@ -64,7 +64,7 @@ export default {
         if (this.timestamp === null) {
           this.finished = true
         }
-        console.log(data)
+        // console.log(data)
       } catch (error) {
         this.error = true
         this.loading = false// 当onload事件发生的时候 会自动将loading转换为true此时需要将其自动转换为false
