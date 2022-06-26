@@ -37,20 +37,31 @@
           />
           <div slot="title" class="user-name">{{ article.aut_name }}</div>
           <div slot="label" class="publish-date">{{ article.pubdate|ass }}</div>
-          <van-button
-            class="follow-btn"
-            type="info"
-            color="#3296fa"
-            round
-            size="small"
-            icon="plus"
-          >关注
-          </van-button>
-          <!-- <van-button
-            class="follow-btn"
-            round
-            size="small"
-          >已关注</van-button> -->
+          <follow-user class="follow-btn" :user-id="article.aut_id" v-model="article.is_followed"/>
+          <!--          <van-button-->
+          <!--            v-if="article.is_followed"-->
+          <!--            class="follow-btn"-->
+          <!--            round-->
+          <!--            size="small"-->
+          <!--            @click="onFollow"-->
+          <!--            :loading="followLoading"-->
+          <!--            loading-text="加载中..."-->
+          <!--          >已关注-->
+          <!--          </van-button>-->
+          <!--          <van-button-->
+          <!--            :loading="followLoading"-->
+          <!--            loading-text="加载中..."-->
+          <!--            v-else-->
+          <!--            class="follow-btn"-->
+          <!--            type="info"-->
+          <!--            color="#3296fa"-->
+          <!--            round-->
+          <!--            size="small"-->
+          <!--            icon="plus"-->
+          <!--            @click="onFollow"-->
+          <!--          >关注-->
+          <!--          </van-button>-->
+
         </van-cell>
         <!-- /用户信息 -->
 
@@ -71,10 +82,11 @@
             info="123"
             color="#777"
           />
-          <van-icon
-            color="#777"
-            name="star-o"
-          />
+          <!--                    <van-icon-->
+          <!--                      color="#777"-->
+          <!--                      name="star-o"-->
+          <!--                    />-->
+          <collect-article v-model="article.is_collected" color="#777" class="btn-item"/>
           <van-icon
             color="#777"
             name="good-job-o"
@@ -108,6 +120,8 @@
 import { getArticleById } from '@/api/articles'
 import dayjs from '@/utils/dayjs'
 import { ImagePreview } from 'vant'
+import FollowUser from '@/components/follow-user'
+import CollectArticle from '@/components/collect-article'
 
 export default {
   filters: {
@@ -116,7 +130,10 @@ export default {
     }
   },
   name: 'ArticleIndex',
-  components: {},
+  components: {
+    CollectArticle,
+    FollowUser
+  },
   props: {
     // 使用props获取动态路由的数据
     articleId: {
@@ -127,7 +144,8 @@ export default {
   data () {
     return {
       article: {},
-      show: 0
+      show: 0,
+      followLoading: false // 点击关注是否处于false
     }
   },
   computed: {},
@@ -138,6 +156,24 @@ export default {
   mounted () {
   },
   methods: {
+    // async onFollow () {
+    //   this.followLoading = true
+    //   try {
+    //     if (this.article.is_followed) {
+    //       // false 表示关注用户了 点击取消关注
+    //       await deleteFollow(this.article.aut_id)
+    //     } else {
+    //       await addFollow(this.article.aut_id)
+    //     }
+    //     this.article.is_followed = !this.article.is_followed
+    //   } catch (e) {
+    //     if (e.response && e.response.status === 400) {
+    //       this.$toast('你丫的不能关注自己')
+    //     }
+    //     this.$toast('请求失败')
+    //   }
+    //   this.followLoading = false
+    // },
 
     async loadArticle () {
       try {
@@ -261,7 +297,7 @@ export default {
     justify-content: center;
     background-color: #fff;
 
-    .van-icon {
+    /deep/ .van-icon {
       font-size: 122px;
       color: #b4b4b4;
     }
@@ -304,7 +340,7 @@ export default {
       color: #a7a7a7;
     }
 
-    .van-icon {
+    /deep/ .van-icon {
       font-size: 40px;
 
       .van-info {
