@@ -42,20 +42,19 @@ export default {
     async onLike () {
       this.loading = true
       try {
-        let status = -1
         if (this.value === 1) {
           // 已点赞，要取消点赞
           await deleteLike(this.articleId)
+          this.$emit('input', -1)
         } else {
           // 没有点赞，要添加点赞
           await addLike(this.articleId)
-          status = 1
+
+          this.$emit('input', 1)
         }
 
-        // 更新视图
-        this.$emit('input', status)
         this.$nextTick(() => {
-          this.$toast.success(status === 1 ? '点赞成功' : '取消点赞')
+          this.$toast.success(this.value === 1 ? '点赞成功' : '取消点赞')
         })
       } catch (err) {
         console.log(err)

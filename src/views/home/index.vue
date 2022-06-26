@@ -55,12 +55,25 @@ export default {
     return {
       active: 0,
       channels: [],
-      isChannelEditShow: false
+      isChannelEditShow: false,
+      top: null,
+      children: {}
 
     }
   },
   created () {
     this.loadingChannels()
+  },
+  beforeRouteLeave (to, from, next) {
+    // 在导航离开渲染该组件的对应路由时调用
+    // 与 `beforeRouteUpdate` 一样，它可以访问组件实例 `this`
+    const el = document.querySelectorAll('.van-tab__pane-wrapper')[this.active]
+    this.children = el.querySelector('.article-list')
+    this.top = this.children.scrollTop
+    next()
+  },
+  activated () {
+    this.children.scrollTop = this.top
   },
   mounted () {
   },

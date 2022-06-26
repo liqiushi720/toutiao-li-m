@@ -68,6 +68,7 @@
         <!-- 文章内容 -->
         <div class="article-content markdown-body" ref="article-content" v-html="article.content"></div>
         <van-divider>正文结束</van-divider>
+        <comment-list :source="article.art_id"/>
         <!-- 底部区域 -->
         <div class="article-bottom">
           <van-button
@@ -124,6 +125,7 @@ import { ImagePreview } from 'vant'
 import FollowUser from '@/components/follow-user'
 import CollectArticle from '@/components/collect-article'
 import LikeArticle from '@/components/like-article'
+import CommentList from '@/views/article/components/comment-list'
 
 export default {
   filters: {
@@ -133,6 +135,7 @@ export default {
   },
   name: 'ArticleIndex',
   components: {
+    CommentList,
     LikeArticle,
     CollectArticle,
     FollowUser
