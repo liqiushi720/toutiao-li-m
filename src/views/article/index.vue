@@ -83,14 +83,15 @@
             color="#777"
           />
           <!--                    <van-icon-->
-          <!--                      color="#777"-->
+          <!--                       color="#777"-->
           <!--                      name="star-o"-->
           <!--                    />-->
-          <collect-article v-model="article.is_collected" color="#777" class="btn-item"/>
-          <van-icon
-            color="#777"
-            name="good-job-o"
-          />
+          <collect-article v-model="article.is_collected" :article-id="article.art_id" color="#777" class="btn-item"/>
+          <!--          <van-icon-->
+          <!--            color="#777"-->
+          <!--            name="good-job-o"-->
+          <!--          />-->
+          <like-article class="btn-item" v-model="article.attitude" :article-id="article.art_id"/>
           <van-icon name="share" color="#777777"></van-icon>
         </div>
         <!-- /底部区域 -->
@@ -122,6 +123,7 @@ import dayjs from '@/utils/dayjs'
 import { ImagePreview } from 'vant'
 import FollowUser from '@/components/follow-user'
 import CollectArticle from '@/components/collect-article'
+import LikeArticle from '@/components/like-article'
 
 export default {
   filters: {
@@ -131,6 +133,7 @@ export default {
   },
   name: 'ArticleIndex',
   components: {
+    LikeArticle,
     CollectArticle,
     FollowUser
   },
