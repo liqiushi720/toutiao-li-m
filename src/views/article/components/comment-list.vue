@@ -1,5 +1,6 @@
 <template>
   <van-list
+    :immediate-check='false'
     v-model="loading"
     :finished="finished"
     finished-text="没有更多了"
@@ -20,6 +21,7 @@ import CommentItem from './comment-item'
 
 export default {
   created () {
+    this.loading = true
     this.onLoad()
   },
   name: 'CommentList',
@@ -34,6 +36,16 @@ export default {
     list: {
       type: Array,
       required: true
+    },
+    totalCount: {
+      type: [Number, String]
+    },
+    type: {
+      type: String,
+      default: 'a',
+      validator (value) {
+        return ['a', 'c'].indexOf(value) !== -1
+      }
     }
   },
   data () {
@@ -52,7 +64,7 @@ export default {
       try {
         // 1. 请求获取数据
         const { data } = await getComments({
-          type: 'a', //  评论类型，a-对文章(article)的评论，c-对评论(comment)的回复
+          type: this.type, //  评论类型，a-对文章(article)的评论，c-对评论(comment)的回复
           source: this.source.toString(), // 源id，文章id或评论id,【可能有大数字，所以执行一下toString 方法】
           offset: this.offset, // 评论数据的偏移量，值为评论id，表示从此id的数据向后取，不传表示从第一页开始读取数据
           limit: this.limit // 获取的评论数据个数，不传表示采用后端服务设定的默认每页数据量
@@ -63,7 +75,10 @@ export default {
           results,
           total_count: totalCount
         } = data.data
-        this.$emit('update:totalCount', totalCount)
+        if (this.totalCount !== undefined) {
+          this.$emit('update:totalCount', totalCount)
+        }
+
         this.$parent.list.push(...results)
 
         // 3. 将 loading 设置为 false

@@ -106,11 +106,13 @@
         <!------------------------ /评论回复 ------------------------------>
         <!------------------------ 评论回复 ------------------------------>
         <van-popup
+
           v-model="isReplyShow"
           position="bottom"
           style="height:80%"
         >
           <comment-reply
+            v-if="isReplyShow"
             :comment="comment"
             :isReplyShow.sync="isReplyShow"
           />
@@ -151,6 +153,11 @@ import CommentPost from '@/views/article/components/comment-post'
 import CommentReply from '@/views/article/components/comment-reply'
 
 export default {
+  provide () {
+    return {
+      articleId: this.articleId
+    }
+  },
   filters: {
     ass (values) {
       return dayjs().to(dayjs(values))

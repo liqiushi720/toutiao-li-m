@@ -29,6 +29,14 @@ export default {
     target: {
       type: [Number, String, Object],
       required: true
+    },
+    art_id: {
+      type: [Number, String],
+      default: null
+
+    },
+    comment: {
+      type: Object
     }
   },
   name: 'CommentPost',
@@ -55,13 +63,15 @@ export default {
         const { data } = await addComment({
           target: this.target.toString(), // 评论目标id（评论文章即文章id，对评论进行回复则为评论id） 防止有大数字最好也执行一下toString方法！
           content: this.message, // 评论内容
-          art_id: null // 文章id，对评论内容发表回复时，需要传递此参数，表明所属文章id。对文章进行评论，不要传此参数。
+          art_id: this.art_id // 文章id，对评论内容发表回复时，需要传递此参数，表明所属文章id。对文章进行评论，不要传此参数。
         })
         console.log(data)
         this.$toast.success('发布成功')
         this.$parent.$parent.list.unshift(data.data.new_obj)
         this.$parent.$parent.isPostShow = false
-
+        if (this.comment !== undefined) {
+          this.$parent.$parent.$parent.$parent.comment.reply_count++
+        }
         // 关闭弹出层
         // 将发布内容显示到列表顶部
         // 清空文本框
